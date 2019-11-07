@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">MyTime</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">MyTime</string>
+    <string name="menu_tag">标签</string>
+    <string name="menu_slideshow">小部件</string>
+    <string name="menu_theme">主题色</string>
+    <string name="menu_set">设置</string>
+    <string name="menu_about">关于</string>
+    <string name="menu_help">帮助</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
