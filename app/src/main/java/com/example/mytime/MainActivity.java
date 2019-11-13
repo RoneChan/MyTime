@@ -4,10 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.mytime.ui.AddNewTime.NewTime;
+import com.example.mytime.ui.home.HomeFragment;
+import com.example.mytime.ui.home.TimeDetail;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.Nullable;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -21,6 +25,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+
+import static com.example.mytime.ui.home.HomeFragment.times;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,10 +44,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(MainActivity.this, NewTime.class);
-                startActivity(intent);
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                  //      .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this, NewTime.class);
+                startActivityForResult(intent, 2);
             }
         });
 
@@ -51,10 +55,10 @@ public class MainActivity extends AppCompatActivity {
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
-                R.id.nav_tools, R.id.nav_share, R.id.nav_send,R.id.nav_help)
+                R.id.nav_tools, R.id.nav_share, R.id.nav_send, R.id.nav_help)
                 .setDrawerLayout(drawer)
                 .build();
-        //
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
@@ -72,5 +76,19 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2 && resultCode == 1) {
+            MyTime time = new MyTime(data.getStringExtra("title"), data.getStringExtra("year")
+                    , data.getStringExtra("month"), data.getStringExtra("day"), data.getStringExtra("remark")
+                    , data.getStringExtra("tag"), data.getStringExtra("reset"));
+            times.add(time);
+
+        }
+
+
     }
 }
