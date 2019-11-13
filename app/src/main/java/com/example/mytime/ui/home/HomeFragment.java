@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -51,21 +52,8 @@ public class HomeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         listView = view.findViewById(R.id.ls_home_fragment);
-        fileDataSource=new FileDataStream(container.getContext());
-        times=fileDataSource.load();
-/*
-        if(times.size()==0) {
-            MyTime time1=new MyTime("title1","year1","month1","date1","remark1");
-            MyTime time2=new MyTime("title2","year2","month2","date2","remark2");
-            MyTime time3=new MyTime("title3","year3","month3","date3","remark3");
-            MyTime time4=new MyTime("title4","year4","month4","date4","remark4");
-            times.add(time1);
-            times.add(time2);
-            times.add(time3);
-            times.add(time4);
-        }
-
- */
+        fileDataSource = new FileDataStream(container.getContext());
+        times = fileDataSource.load();
 
 
         myHomeFragmentAdapter = new MyHomeFragmentAdapter(container.getContext(), R.layout.fragment_home_item, times);
@@ -74,8 +62,8 @@ public class HomeFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent=new Intent(container.getContext(),TimeDetail.class);
-                intent.putExtra("position",position);
+                Intent intent = new Intent(container.getContext(), TimeDetail.class);
+                intent.putExtra("position", position);
                 startActivity(intent);
             }
         });
@@ -109,7 +97,7 @@ public class HomeFragment extends Fragment {
 
         @NonNull
         @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             ViewHolder viewHolder;
             if (convertView == null) {
                 //若是第一次创建
@@ -118,6 +106,8 @@ public class HomeFragment extends Fragment {
                 viewHolder.title = (TextView) convertView.findViewById(R.id.tv_home_title);
                 viewHolder.data = (TextView) convertView.findViewById(R.id.tv_home_data);
                 viewHolder.remark = (TextView) convertView.findViewById(R.id.tv_home_remark);
+                viewHolder.frontView = convertView.findViewById(R.id.front_layout);
+                viewHolder.deleteView = convertView.findViewById(R.id.delete_layout);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -125,12 +115,25 @@ public class HomeFragment extends Fragment {
 
             //设置控件的值
             MyTime time = this.getItem(position);
+            if (time != null) {
+                viewHolder.title.setText(time.getTitle());
+                viewHolder.data.setText(time.getYear() + "年" + time.getMonth() + "月" + time.getDay() + "日");
+                // img.setImageResource(time.getPictureId());
+                viewHolder.remark.setText(time.getRemark());
 
-            viewHolder.title.setText(time.getTitle());
-            viewHolder.data.setText(time.getYear() + "年" + time.getMonth() + "月" + time.getDay() + "日");
-            // img.setImageResource(time.getPictureId());
-            viewHolder.remark.setText(time.getRemark());
-
+                viewHolder.deleteView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        times.remove(position);
+                    }
+                });
+                viewHolder.frontView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getContext(),"frontShow", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
             return convertView;
         }
 
@@ -138,6 +141,8 @@ public class HomeFragment extends Fragment {
         class ViewHolder {
             TextView title, data, remark;
             ImageView img;
+            View frontView;
+            View deleteView;
 
         }
     }
@@ -146,6 +151,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i("return backn ","1");
+        Log.i("return backn ", "1");
     }
 }
