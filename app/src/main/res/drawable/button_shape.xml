@@ -5,13 +5,16 @@
     <solid android:color="#6975A6" />
     <!--设置圆角-->
     <corners android:radius="100dip" />
-    <!--<padding-->
-    <!--android:bottom="10dp"-->
-    <!--android:left="10dp"-->
-    <!--android:right="10dp"-->
-    <!--android:top="10dp"-->
-    <!--/>-->
-    <!--设置边框线的宽度和颜色-->
+
+<!--
+    <padding
+    android:bottom="10dp"
+    android:left="10dp"
+    android:right="10dp"
+    android:top="10dp"
+    />
+    -->
+
     <stroke
         android:width="3dp"
         android:color="#402F5D" />

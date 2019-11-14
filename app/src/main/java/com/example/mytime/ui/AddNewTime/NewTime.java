@@ -51,8 +51,6 @@ public class NewTime extends AppCompatActivity {
         setContentView(R.layout.activity_new_time);
 
         init();
-
-
     }
 
     private void init() {

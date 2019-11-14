@@ -106,8 +106,6 @@ public class HomeFragment extends Fragment {
                 viewHolder.title = (TextView) convertView.findViewById(R.id.tv_home_title);
                 viewHolder.data = (TextView) convertView.findViewById(R.id.tv_home_data);
                 viewHolder.remark = (TextView) convertView.findViewById(R.id.tv_home_remark);
-                viewHolder.frontView = convertView.findViewById(R.id.front_layout);
-                viewHolder.deleteView = convertView.findViewById(R.id.delete_layout);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -121,18 +119,6 @@ public class HomeFragment extends Fragment {
                 // img.setImageResource(time.getPictureId());
                 viewHolder.remark.setText(time.getRemark());
 
-                viewHolder.deleteView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        times.remove(position);
-                    }
-                });
-                viewHolder.frontView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(getContext(),"frontShow", Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
             return convertView;
         }
@@ -141,8 +127,6 @@ public class HomeFragment extends Fragment {
         class ViewHolder {
             TextView title, data, remark;
             ImageView img;
-            View frontView;
-            View deleteView;
 
         }
     }
