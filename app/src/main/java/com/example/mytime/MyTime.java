@@ -1,10 +1,13 @@
 package com.example.mytime;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 public class MyTime implements Serializable {
     private String title,year,month,day,remark;
     private String tag,reset;
+    private String timeImgPath="";
 
     public MyTime(String title, String year, String month, String day, String remark, String tag, String reset) {
         this.title = title;
@@ -16,12 +19,23 @@ public class MyTime implements Serializable {
         this.reset = reset;
     }
 
-    public MyTime(String title, String year, String month, String day, String remark) {
+    public MyTime(String title, String year, String month, String day, String remark, String tag, String reset, String timeImgPath) {
         this.title = title;
         this.year = year;
         this.month = month;
         this.day = day;
         this.remark = remark;
+        this.tag = tag;
+        this.reset = reset;
+        this.timeImgPath=timeImgPath;
+    }
+
+    public String getTimeImgPath() {
+        return timeImgPath;
+    }
+
+    public void setTimeImgPath(String timeImgPath) {
+        this.timeImgPath = timeImgPath;
     }
 
     public String getTag() {

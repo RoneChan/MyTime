@@ -36,7 +36,7 @@ public class FileDataStream {
         ObjectOutputStream outputStream=null;
         try{
             //写入文件
-            outputStream=new ObjectOutputStream(context.openFileOutput("MyTime.txt",Context.MODE_APPEND));
+            outputStream=new ObjectOutputStream(context.openFileOutput("MyTime.txt",Context.MODE_PRIVATE));
             outputStream.writeObject(myTimes);
             outputStream.close();
 
@@ -50,10 +50,8 @@ public class FileDataStream {
             ObjectInputStream inputStream=new ObjectInputStream(context.openFileInput("MyTime.txt"));
             myTimes=(ArrayList<MyTime>) inputStream.readObject();
             inputStream.close();
-
         }catch (Exception e){
             e.printStackTrace();
-
         }
         return myTimes;
 

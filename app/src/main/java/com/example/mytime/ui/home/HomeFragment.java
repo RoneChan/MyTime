@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -34,6 +33,7 @@ public class HomeFragment extends Fragment {
 
     private FileDataStream fileDataSource;
 
+    //在关闭正常程序时，保存数据
     @Override
     public void onDestroy() {
         fileDataSource.setMyTimes(times);
@@ -41,9 +41,18 @@ public class HomeFragment extends Fragment {
         super.onDestroy();
     }
 
+    //在程序被kill时，保存好数据
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        fileDataSource.setMyTimes(times);
+        fileDataSource.save();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
+        //通知是适配器更新页面
         myHomeFragmentAdapter.notifyDataSetChanged();
     }
 
@@ -53,8 +62,8 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         listView = view.findViewById(R.id.ls_home_fragment);
         fileDataSource = new FileDataStream(container.getContext());
+        //从文件总读取数据
         times = fileDataSource.load();
-
 
         myHomeFragmentAdapter = new MyHomeFragmentAdapter(container.getContext(), R.layout.fragment_home_item, times);
         listView.setAdapter(myHomeFragmentAdapter);
@@ -118,7 +127,6 @@ public class HomeFragment extends Fragment {
                 viewHolder.data.setText(time.getYear() + "年" + time.getMonth() + "月" + time.getDay() + "日");
                 // img.setImageResource(time.getPictureId());
                 viewHolder.remark.setText(time.getRemark());
-
             }
             return convertView;
         }
@@ -131,10 +139,4 @@ public class HomeFragment extends Fragment {
         }
     }
 
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.i("return backn ", "1");
-    }
 }

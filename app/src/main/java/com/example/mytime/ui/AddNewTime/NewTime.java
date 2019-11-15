@@ -7,9 +7,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -18,12 +16,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.mytime.MainActivity;
 import com.example.mytime.MyTime;
 import com.example.mytime.R;
 import com.example.mytime.ui.home.HomeFragment;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import static com.example.mytime.ui.home.HomeFragment.times;
@@ -31,6 +27,7 @@ import static com.example.mytime.ui.home.HomeFragment.times;
 public class NewTime extends AppCompatActivity {
     public static final int CONTEXT_ITEM_NEW = 1;
     public static final int CONTEXT_ITEM_EDIT = 2;
+    public static final int TIME_OK = 100;
 
     ConstraintLayout data, reset, image, add_table;
     TextView data2, reset2, add_table2;
@@ -254,7 +251,7 @@ public class NewTime extends AppCompatActivity {
                     intent.putExtra("reset", chooseReset);
                     intent.putExtra("reset", chooseTag);
                     intent.putExtra("position", position);
-                    setResult(1, intent);
+                    setResult(TIME_OK, intent);
                     finish();
                 }
             }

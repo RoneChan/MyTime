@@ -1,9 +1,13 @@
 package com.example.mytime.ui.share;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -20,9 +24,11 @@ public class ShareFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        shareViewModel =
-                ViewModelProviders.of(this).get(ShareViewModel.class);
+        //shareViewModel =
+          //      ViewModelProviders.of(this).get(ShareViewModel.class);
+
         View root = inflater.inflate(R.layout.fragment_share, container, false);
+
         final TextView textView = root.findViewById(R.id.text_share);
         shareViewModel.getText().observe(this, new Observer<String>() {
             @Override
@@ -30,6 +36,15 @@ public class ShareFragment extends Fragment {
                 textView.setText(s);
             }
         });
+
+        View view = inflater.inflate(R.layout.fragment_share, container, false);
+        ImageView img= view.findViewById(R.id.shareimg);
+        Drawable db = getResources().getDrawable(R.drawable.img_main);
+        BitmapDrawable drawable = (BitmapDrawable)db;
+        Bitmap bitmap = drawable.getBitmap();
+
+        img.setImageBitmap(bitmap);
+
         return root;
     }
 }
