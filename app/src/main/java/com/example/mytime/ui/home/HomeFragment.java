@@ -45,8 +45,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        fileDataSource.setMyTimes(times);
-        fileDataSource.save();
+     //   fileDataSource.setMyTimes(times);
+       // fileDataSource.save();
     }
 
     @Override

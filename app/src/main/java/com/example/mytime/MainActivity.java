@@ -1,24 +1,14 @@
 package com.example.mytime;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import com.example.mytime.ui.AddNewTime.NewTime;
-import com.example.mytime.ui.gallery.RealPathFromUriUtils;
-import com.example.mytime.ui.home.HomeFragment;
-import com.example.mytime.ui.home.TimeDetail;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;

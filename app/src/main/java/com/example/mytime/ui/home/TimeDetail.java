@@ -6,19 +6,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,11 +25,9 @@ import com.example.mytime.MyTime;
 import com.example.mytime.R;
 import com.example.mytime.ui.AddNewTime.NewTime;
 import com.example.mytime.ui.gallery.RealPathFromUriUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.UUID;
 
 import static com.example.mytime.MainActivity.TIME_NEW_REQUEST_CODE;
 import static com.example.mytime.ui.AddNewTime.NewTime.TIME_OK;
@@ -40,21 +35,16 @@ import static com.example.mytime.ui.gallery.GalleryFragment.CAMERA_REQUEST_CODE;
 import static com.example.mytime.ui.home.HomeFragment.times;
 
 public class TimeDetail extends AppCompatActivity {
+    static int NEW_ITME = -1;
+    public final static int GALLERY_REQUEST_CODE = 202;
+    public final static int TIME_EDIT_REQUEST_CODE = 200;
 
     String title, year, month, day, remark;
     String tag, reset;
     TextView tv_title, tv_date, tv_remark;
     ImageView btn_edit, btn_delete, btn_change_background;
     Bitmap timeVitmap;
-
-    static int NEW_ITME = -1;
-    public final static int GALLERY_REQUEST_CODE = 202;
-    public final static int TIME_EDIT_REQUEST_CODE = 200;
-    public final static int PIC_CUT_REQUEST_CODE = 199;
-
     ImageView imageView;
-
-
     int position;
 
     @Override
@@ -66,16 +56,6 @@ public class TimeDetail extends AppCompatActivity {
 
         Intent intent = getIntent();
         position = intent.getIntExtra("position", -1);
-        /*
-        title=intent.getStringExtra("title");
-        year=intent.getStringExtra("year");
-        month=intent.getStringExtra("month");
-        day=intent.getStringExtra("day");
-        remark=intent.getStringExtra("remark");
-        tag=intent.getStringExtra("tag");
-        reset=intent.getStringExtra("reset");
-
-         */
 
         Init(position);
         btn_edit.setOnClickListener(new View.OnClickListener() {
@@ -100,11 +80,14 @@ public class TimeDetail extends AppCompatActivity {
             public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(TimeDetail.this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {   //权限还没有授予，需要在这里写申请权限的代码
+                        != PackageManager.PERMISSION_GRANTED ||
+                        ContextCompat.checkSelfPermission(TimeDetail.this,
+                                Manifest.permission.READ_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {   //权限还没有授予，需要在这里写申请权限的代码
                     // 第二个参数是一个字符串数组，里面是你需要申请的权限 可以设置申请多个权限
                     // 最后一个参数是标志你这次申请的权限，该常量在onRequestPermissionsResult中使用到
                     ActivityCompat.requestPermissions(TimeDetail.this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CAMERA_REQUEST_CODE);
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_REQUEST_CODE);
                 } else { //权限已经被授予，在这里直接写要执行的相应方法即可
                     Intent imgIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     imgIntent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -125,7 +108,6 @@ public class TimeDetail extends AppCompatActivity {
         remark = myTime.getRemark();
         tag = myTime.getTag();
         reset = myTime.getReset();
-        timeVitmap = BitmapFactory.decodeFile(myTime.getTimeImgPath());
 
         tv_title = findViewById(R.id.tv_detail_title);
         tv_date = findViewById(R.id.tv_detail_date);
@@ -138,7 +120,21 @@ public class TimeDetail extends AppCompatActivity {
         tv_title.setText(title);
         tv_date.setText(year + "年" + month + "月" + day + "日");
         tv_remark.setText(remark);
-        imageView.setImageBitmap(timeVitmap);
+
+        //s设置用户保存的图片
+        if (myTime.getTimeImgPath() != "") {
+            timeVitmap = BitmapFactory.decodeFile(myTime.getTimeImgPath());
+            int bwidth = timeVitmap.getWidth();
+            int bHeight = timeVitmap.getHeight();
+            DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+            int width = displayMetrics.widthPixels;
+            int height = width * bHeight / bwidth;
+            ViewGroup.LayoutParams para = imageView.getLayoutParams();
+            para.height = height;
+            imageView.setLayoutParams(para);
+
+            imageView.setImageBitmap(timeVitmap);
+        }
     }
 
 
@@ -146,6 +142,7 @@ public class TimeDetail extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == TIME_NEW_REQUEST_CODE && resultCode == TIME_OK) {
+            //成功新建倒计时
             int position = data.getIntExtra("position", -1);
 
             //position==NEW_ITME,代表新建倒计时项
@@ -168,81 +165,34 @@ public class TimeDetail extends AppCompatActivity {
             finish();
         } else if (requestCode == GALLERY_REQUEST_CODE) {
             if (data != null) {
+                //获取被选图片的url
                 String realPathFromUri = RealPathFromUriUtils.getRealPathFromUri(this, data.getData());
-                startPhotoZoom(data.getData());
+                //将图片转化为Bitmap
+                Bitmap bitmap = BitmapFactory.decodeFile(realPathFromUri);
 
-               /* Bitmap bitmap = BitmapFactory.decodeFile(realPathFromUri);
+                //获取图片长宽
+                int bwidth = bitmap.getWidth();
+                int bHeight = bitmap.getHeight();
+                //获取屏幕高、宽，让图片按比例放大，使其宽度等于屏幕大小
+                DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+                int width = displayMetrics.widthPixels;
+                int height = width * bHeight / bwidth;
+                ViewGroup.LayoutParams para = imageView.getLayoutParams();
+                para.height = height;
+                //设置imageview高度
+                imageView.setLayoutParams(para);
+
                 imageView.setImageBitmap(bitmap);
+                //保存bitMap
                 times.get(position).setTimeImgPath(saveBitmap(this, bitmap));
-
-                */
-
             } else {
                 Toast.makeText(this, "图片损坏，请重新选择", Toast.LENGTH_SHORT).show();
             }
-
-        }else if(requestCode==PIC_CUT_REQUEST_CODE) {
-            Bitmap bitmap = BitmapFactory.decodeFile(RealPathFromUriUtils.getRealPathFromUri(this,uritempFile));
-            imageView.setImageBitmap(bitmap);
-            times.get(position).setTimeImgPath(saveBitmap(this, bitmap));
         }
     }
 
-    private Uri uritempFile;
-    public void startPhotoZoom(Uri uri) {
-        Log.e("uri=====", "" + uri);
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 60);
-        intent.putExtra("outputY", 60);
-        //uritempFile为Uri类变量，实例化uritempFile
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            //开启临时权限
-            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            //重点:针对7.0以上的操作
-            intent.setClipData(ClipData.newRawUri(MediaStore.EXTRA_OUTPUT, uri));
-            uritempFile = uri;
-        } else {
-            uritempFile = Uri.parse("file://" + "/" + Environment.getExternalStorageDirectory().getPath() + "/" + "small.jpg");
-        }
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uritempFile);
-        intent.putExtra("return-data", false);
-        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-        intent.putExtra("noFaceDetection", true);
-        startActivityForResult(intent, PIC_CUT_REQUEST_CODE);
-    }
-
-    public void startPhotoZoom(Uri uri, String imageUri) {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        // 下面这个crop=true是设置在开启的Intent中设置显示的VIEW可裁剪
-        intent.putExtra("crop", "true");
-        intent.putExtra("scale", true);
-
-        intent.putExtra("aspectX", 2);
-        intent.putExtra("aspectY", 1);
-
-        intent.putExtra("outputX", 600);
-        intent.putExtra("outputY", 300);
-
-        intent.putExtra("return-data", false);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-        intent.putExtra("noFaceDetection", true); // no face detection
-
-        startActivityForResult(intent, PIC_CUT_REQUEST_CODE);
-    }
-
-
-    private static String generateFileName() {
-        return UUID.randomUUID().toString();
-    }
 
     /* 保存bitmap到本地
-     *
      * @param context
      * @param mBitmap
      * @return
