@@ -33,7 +33,7 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private MyHomeFragmentAdapter myHomeFragmentAdapter;
-    public static ArrayList<MyTime> times;
+    public static ArrayList<MyTime> times=new ArrayList<MyTime>() ;
     ListView listView;
 
     private FileDataStream fileDataSource;
@@ -50,8 +50,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-     //   fileDataSource.setMyTimes(times);
-       // fileDataSource.save();
+        fileDataSource.setMyTimes(times);
+        fileDataSource.save();
     }
 
     @Override
@@ -68,7 +68,8 @@ public class HomeFragment extends Fragment {
         listView = view.findViewById(R.id.ls_home_fragment);
         fileDataSource = new FileDataStream(container.getContext());
         //从文件总读取数据
-        times = fileDataSource.load();
+        if(times.size()==0)
+          times = fileDataSource.load();
 
         myHomeFragmentAdapter = new MyHomeFragmentAdapter(container.getContext(), R.layout.fragment_home_item, times);
         listView.setAdapter(myHomeFragmentAdapter);

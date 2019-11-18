@@ -6,13 +6,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +73,9 @@ public class TimeDetail extends AppCompatActivity {
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //删除用户选择的图片
+               File file=new File(times.get(position).getTimeImgPath());
+               file.delete();
                 times.remove(position);
                 finish();
             }
@@ -122,7 +128,7 @@ public class TimeDetail extends AppCompatActivity {
         tv_remark.setText(remark);
 
         //s设置用户保存的图片
-        if (myTime.getTimeImgPath() != "") {
+        if (!(myTime.getTimeImgPath()).equals("")) {
             timeVitmap = BitmapFactory.decodeFile(myTime.getTimeImgPath());
             int bwidth = timeVitmap.getWidth();
             int bHeight = timeVitmap.getHeight();
@@ -217,7 +223,6 @@ public class TimeDetail extends AppCompatActivity {
             fos.flush();
             fos.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return null;
         }

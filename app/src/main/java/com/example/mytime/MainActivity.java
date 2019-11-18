@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
                     , data.getStringExtra("month"), data.getStringExtra("day"), data.getStringExtra("remark")
                     , data.getStringExtra("tag"), data.getStringExtra("reset"));
             times.add(time);
-
         }
 
     }
