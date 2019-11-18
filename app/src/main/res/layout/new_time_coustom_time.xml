@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/et_custom_time_set"
+        android:id="@+id/et_custom_time_reset"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"

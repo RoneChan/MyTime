@@ -24,14 +24,14 @@ import android.widget.Toast;
 import com.example.mytime.MyTime;
 import com.example.mytime.R;
 import com.example.mytime.ui.AddNewTime.NewTime;
-import com.example.mytime.ui.gallery.RealPathFromUriUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static com.example.mytime.MainActivity.TIME_NEW_REQUEST_CODE;
 import static com.example.mytime.ui.AddNewTime.NewTime.TIME_OK;
-import static com.example.mytime.ui.gallery.GalleryFragment.CAMERA_REQUEST_CODE;
+import static com.example.mytime.ui.about.AboutFragment.CAMERA_REQUEST_CODE;
 import static com.example.mytime.ui.home.HomeFragment.times;
 
 public class TimeDetail extends AppCompatActivity {
@@ -132,7 +132,6 @@ public class TimeDetail extends AppCompatActivity {
             ViewGroup.LayoutParams para = imageView.getLayoutParams();
             para.height = height;
             imageView.setLayoutParams(para);
-
             imageView.setImageBitmap(timeVitmap);
         }
     }

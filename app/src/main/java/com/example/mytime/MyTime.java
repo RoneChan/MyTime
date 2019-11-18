@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 public class MyTime implements Serializable {
     private String title,year,month,day,remark;
-    private String tag,reset;
+    private String tag="5",reset="";
     private String timeImgPath="";
 
     public MyTime(String title, String year, String month, String day, String remark, String tag, String reset) {

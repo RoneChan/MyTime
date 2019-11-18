@@ -1,4 +1,4 @@
-package com.example.mytime.ui.gallery;
+package com.example.mytime.ui.home;
 
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
@@ -10,7 +10,6 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
 public class RealPathFromUriUtils {
-
     /**
      * 根据Uri获取图片的绝对路径
      *
@@ -112,4 +111,5 @@ public class RealPathFromUriUtils {
         return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 }
+
 

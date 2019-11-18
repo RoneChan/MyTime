@@ -28,7 +28,7 @@ public class NewTime extends AppCompatActivity {
     public static final int CONTEXT_ITEM_NEW = 1;
     public static final int CONTEXT_ITEM_EDIT = 2;
     public static final int TIME_OK = 100;
-
+    final String resetItems[] = {"每周", "每月", "每年", "自定义", "无"};
     ConstraintLayout data, reset, image, add_table;
     TextView data2, reset2, add_table2;
     EditText et_title, et_remark;
@@ -37,7 +37,7 @@ public class NewTime extends AppCompatActivity {
     int position = -1;
     MyTime myTime = null;
 
-    String myYear="", myMonth="", myDayOfMonth="";
+    String myYear = "", myMonth = "", myDayOfMonth = "";
     String chooseTag = "5", chooseReset = "4";
 
     @Override
@@ -79,6 +79,7 @@ public class NewTime extends AppCompatActivity {
             myMonth = myTime.getMonth();
             myDayOfMonth = myTime.getDay();
             data2.setText(myYear + "年" + myMonth + "月" + myDayOfMonth + "日");
+            reset2.setText(resetItems[Integer.parseInt(myTime.getTag())]);
         }
 
         data.setOnClickListener(new View.OnClickListener() {
@@ -111,15 +112,13 @@ public class NewTime extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //弹出tag对话框
-                final String items[] = {"每周", "每月", "每年", "自定义", "无"};
-
                 AlertDialog dialog = new AlertDialog.Builder(NewTime.this)
                         .setIcon(R.drawable.ic_reset)//设置标题的图片
                         .setTitle("周期")//设置对话框的标题
-                        .setSingleChoiceItems(items, 4, new DialogInterface.OnClickListener() {
+                        .setSingleChoiceItems(resetItems, 4, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                chooseTag = which + "";
+                                chooseReset = which + "";
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -133,11 +132,13 @@ public class NewTime extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (Integer.parseInt(chooseReset) != 3) {
-                                    reset2.setText(items[Integer.parseInt(chooseReset)]);
+                                    reset2.setText(resetItems[Integer.parseInt(chooseReset)]);
                                 } else {
                                     dialog.dismiss();
+
                                     View view = getLayoutInflater().inflate(R.layout.new_time_coustom_time, null);
-                                    final EditText editText = (EditText) view.findViewById(R.id.et_custom_time_set);
+                                    final EditText et_reset = (EditText) view.findViewById(R.id.et_custom_time_reset);
+
                                     AlertDialog customDialog = new AlertDialog.Builder(NewTime.this)
                                             .setIcon(R.drawable.ic_reset)//设置标题的图片
                                             .setTitle("周期")//设置对话框的标题
@@ -151,7 +152,7 @@ public class NewTime extends AppCompatActivity {
                                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-                                                    String content = editText.getText().toString();
+                                                    String content = et_reset.getText().toString();
                                                     reset2.setText(content);
                                                     chooseReset = content;
                                                     dialog.dismiss();
@@ -165,6 +166,7 @@ public class NewTime extends AppCompatActivity {
                 dialog.show();
             }
         });
+
 
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,7 +204,7 @@ public class NewTime extends AppCompatActivity {
                                     dialog.dismiss();
                                     View view = getLayoutInflater().inflate(R.layout.new_time_coustom_time2, null);
 
-                                    final EditText editText = (EditText) view.findViewById(R.id.et_custom_time_tag);
+                                    final EditText et_tag = (EditText) view.findViewById(R.id.et_custom_time_tag);
 
                                     AlertDialog customDialog = new AlertDialog.Builder(NewTime.this)
                                             .setIcon(R.drawable.ic_table)//设置标题的图片
@@ -217,7 +219,7 @@ public class NewTime extends AppCompatActivity {
                                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-                                                    String content = editText.getText().toString();
+                                                    String content = et_tag.getText().toString();
                                                     add_table2.setText(content);
                                                     chooseTag = content;
                                                     dialog.dismiss();
@@ -237,11 +239,11 @@ public class NewTime extends AppCompatActivity {
             public void onClick(View v) {
                 String title = et_title.getText().toString();
                 String remark = et_remark.getText().toString();
-                if(title.equals("")){
-                   Toast.makeText(NewTime.this,"请输入标题", Toast.LENGTH_SHORT).show();
-                }else if ( myYear.equals("") || myMonth.equals("") || myDayOfMonth.equals("")) {
-                    Toast.makeText(NewTime.this,"请选择日期", Toast.LENGTH_SHORT).show();
-                }else{
+                if (title.equals("")) {
+                    Toast.makeText(NewTime.this, "请输入标题", Toast.LENGTH_SHORT).show();
+                } else if (myYear.equals("") || myMonth.equals("") || myDayOfMonth.equals("")) {
+                    Toast.makeText(NewTime.this, "请选择日期", Toast.LENGTH_SHORT).show();
+                } else {
                     Intent intent = new Intent(NewTime.this, HomeFragment.class);
                     intent.putExtra("title", title);
                     intent.putExtra("remark", remark);
@@ -249,7 +251,7 @@ public class NewTime extends AppCompatActivity {
                     intent.putExtra("month", myMonth);
                     intent.putExtra("day", myDayOfMonth);
                     intent.putExtra("reset", chooseReset);
-                    intent.putExtra("reset", chooseTag);
+                    intent.putExtra("tag", chooseTag);
                     intent.putExtra("position", position);
                     setResult(TIME_OK, intent);
                     finish();

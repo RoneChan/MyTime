@@ -12,16 +12,16 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.mytime.ui.gallery.GalleryFragment"
+        android:id="@+id/nav_help"
+        android:name="com.example.mytime.ui.help.HelpFragment"
         android:label="@string/menu_tag"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_help" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.mytime.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_about"
+        android:name="com.example.mytime.ui.about.AboutFragment"
+        android:label="@string/menu_about"
+        tools:layout="@layout/fragment_work" />
 
     <fragment
         android:id="@+id/nav_tools"
@@ -30,19 +30,33 @@
         tools:layout="@layout/fragment_tools" />
 
     <fragment
-        android:id="@+id/nav_share"
-        android:name="com.example.mytime.ui.share.ShareFragment"
-        android:label="@string/menu_set"
-        tools:layout="@layout/fragment_share" />
+        android:id="@+id/nav_study"
+        android:name="com.example.mytime.ui.study.StudyFragment"
+        android:label="@string/menu_study"
+        tools:layout="@layout/fragment_study" />
 
     <fragment
-        android:id="@+id/nav_send"
-        android:name="com.example.mytime.ui.send.SendFragment"
+        android:id="@+id/nav_birth"
+        android:name="com.example.mytime.ui.birth.BirthFragment"
         android:label="@string/menu_about"
-        tools:layout="@layout/fragment_send" />
+        tools:layout="@layout/fragment_birth" />
+
     <fragment
-        android:id="@+id/nav_help"
-        android:name="com.example.mytime.ui.help.HelpFragment"
+    android:id="@+id/nav_work"
+    android:name="com.example.mytime.ui.work.WorkFragment"
+    android:label="@string/menu_work"
+    tools:layout="@layout/fragment_work" />
+
+    <fragment
+        android:id="@+id/nav_vocation"
+        android:name="com.example.mytime.ui.vocation.VocationFragment"
         android:label="@string/menu_help"
-        tools:layout="@layout/fragment_help" />
+        tools:layout="@layout/fragment_vocation" />
+
+
+    <fragment
+        android:id="@+id/nav_self_def"
+        android:name="com.example.mytime.ui.self_def.SelfDefineFragment"
+        android:label="@string/menu_sefl_def"
+        tools:layout="@layout/fragment_self_define" />
 </navigation>

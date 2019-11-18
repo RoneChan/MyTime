@@ -21,7 +21,12 @@ import com.example.mytime.FileDataStream;
 import com.example.mytime.MyTime;
 import com.example.mytime.R;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
@@ -79,7 +84,7 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    class MyHomeFragmentAdapter extends ArrayAdapter<MyTime> {
+    public class MyHomeFragmentAdapter extends ArrayAdapter<MyTime> {
 
         int resource;
 
@@ -115,6 +120,7 @@ public class HomeFragment extends Fragment {
                 viewHolder.title = (TextView) convertView.findViewById(R.id.tv_home_title);
                 viewHolder.data = (TextView) convertView.findViewById(R.id.tv_home_data);
                 viewHolder.remark = (TextView) convertView.findViewById(R.id.tv_home_remark);
+                viewHolder.last_day=(TextView) convertView.findViewById(R.id.tv_last_day);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -127,15 +133,39 @@ public class HomeFragment extends Fragment {
                 viewHolder.data.setText(time.getYear() + "年" + time.getMonth() + "月" + time.getDay() + "日");
                 // img.setImageResource(time.getPictureId());
                 viewHolder.remark.setText(time.getRemark());
+
+                /*
+                *计算相隔天数
+                 */
+                Calendar calendar = Calendar.getInstance();
+                //获取系统的日期
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH)+1;
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                String now=year+"-"+month+"-"+day;
+                String setTime=time.getYear()+"-"+time.getMonth()+"-"+time.getDay();
+                DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+
+                try {
+                    Date nowDate=df.parse(now);
+                    Date setTimeDate=df.parse(setTime);
+                    //System.out.println((nowDate.getTime()-setTimeDate.getTime())/(60*60*1000*24));
+                    long lastday= (long) ((setTimeDate.getTime()-nowDate.getTime())/(60*60*1000*24));
+                    if (lastday >= 0) {
+                        viewHolder.last_day.setText("只剩\n"+lastday+"天");
+                    }else{
+                        viewHolder.last_day.setText("已经\n"+Math.abs(lastday)+"天");
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
             return convertView;
         }
-
         //存放复用的组件
         class ViewHolder {
-            TextView title, data, remark;
-            ImageView img;
-
+            TextView title, data, remark,last_day;
         }
     }
 
