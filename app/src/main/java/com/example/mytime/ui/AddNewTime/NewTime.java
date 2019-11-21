@@ -15,8 +15,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -27,16 +27,14 @@ import android.widget.Toast;
 import com.example.mytime.MyTime;
 import com.example.mytime.R;
 import com.example.mytime.ui.home.HomeFragment;
-import com.example.mytime.ui.home.RealPathFromUriUtils;
-import com.example.mytime.ui.home.TimeDetail;
-
-import java.io.File;
+import java.io.FileDescriptor;
 import java.util.Calendar;
 
 import static com.example.mytime.ui.about.AboutFragment.CAMERA_REQUEST_CODE;
 import static com.example.mytime.ui.home.HomeFragment.times;
 import static com.example.mytime.ui.home.TimeDetail.GALLERY_REQUEST_CODE;
 import static com.example.mytime.ui.home.TimeDetail.saveBitmap;
+//import static com.example.mytime.ui.home.TimeDetail.saveBitmap;
 
 public class NewTime extends AppCompatActivity {
     public static final int CONTEXT_ITEM_NEW = 1;
@@ -81,7 +79,6 @@ public class NewTime extends AppCompatActivity {
         et_title = findViewById(R.id.et_title);
         et_remark = findViewById(R.id.et_remark);
 
-
         Intent intent = getIntent();
         position = intent.getIntExtra("position", -1);
 
@@ -95,6 +92,7 @@ public class NewTime extends AppCompatActivity {
             et_title.setText(myTime.getTitle());
             et_remark.setText(myTime.getRemark());
 
+            //获取旧的信息
             myYear = myTime.getYear();
             myMonth = myTime.getMonth();
             myDayOfMonth = myTime.getDay();
@@ -318,10 +316,15 @@ public class NewTime extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALLERY_REQUEST_CODE) {
             if (data != null) {
-                //获取被选图片的url
-                String realPathFromUri = RealPathFromUriUtils.getRealPathFromUri(this, data.getData());
-                //将图片转化为Bitmap
-                bitmap = BitmapFactory.decodeFile(realPathFromUri);
+                ParcelFileDescriptor parcelFileDescriptor = null;
+                try {
+                    parcelFileDescriptor = this.getContentResolver().openFileDescriptor(data.getData(), "r");
+                    FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                    bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+                    parcelFileDescriptor.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 havePicFlag=1;  //havePicFlag=1标志新建time时选择了图片，或者在修改的时候选择了新的图片
                 image2.setText("已选择图片");
             } else{
@@ -329,5 +332,4 @@ public class NewTime extends AppCompatActivity {
             }
         }
     }
-
 }

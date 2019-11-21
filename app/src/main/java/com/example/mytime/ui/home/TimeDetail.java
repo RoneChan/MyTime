@@ -6,17 +6,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.icu.util.IslamicCalendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +29,6 @@ import com.example.mytime.ui.AddNewTime.NewTime;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.util.Calendar;
-import java.util.Date;
 
 import static com.example.mytime.MainActivity.TIME_NEW_REQUEST_CODE;
 import static com.example.mytime.ui.AddNewTime.NewTime.TIME_OK;
@@ -48,7 +42,7 @@ public class TimeDetail extends AppCompatActivity {
 
     String title, year, month, day, remark;
     String tag, reset;
-    TextView tv_title, tv_date, tv_remark, tv_last_day;
+    TextView tv_title, tv_date, tv_remark;
     ImageView btn_edit, btn_delete, btn_change_background;
     Bitmap timeVitmap;
     ImageView imageView;
@@ -122,27 +116,14 @@ public class TimeDetail extends AppCompatActivity {
         tv_title = findViewById(R.id.tv_detail_title);
         tv_date = findViewById(R.id.tv_detail_date);
         tv_remark = findViewById(R.id.tv_detail_remark);
-        tv_last_day = findViewById(R.id.tv_last_day);
         btn_edit = findViewById(R.id.btn_home_edit);
         btn_delete = findViewById(R.id.btn_home_delete);
         btn_change_background = findViewById(R.id.btn_home_change_background);
         imageView = findViewById(R.id.img_detail_background);
 
-
         tv_title.setText(title);
-        tv_date.setText("距离" + year + "年" + month + "月" + day + "日");
+        tv_date.setText(year + "年" + month + "月" + day + "日");
         tv_remark.setText(remark);
-        long lastDay = MyTime.CalculateLastDay(myTime);
-        if (lastDay >= 0) {
-            tv_last_day.setText("只剩" + lastDay + "天");
-        } else {
-
-            tv_last_day.setText("已经" + Math.abs(lastDay) + "天");
-        }
-        //tv_last_day.setText();
-
-        try{
-
 
         //s设置用户保存的图片
         if (!(myTime.getTimeImgPath()).equals("")) {
@@ -157,9 +138,6 @@ public class TimeDetail extends AppCompatActivity {
             imageView.setLayoutParams(para);
             imageView.setImageBitmap(timeVitmap);
         }
-        }catch (Exception e){
-            Toast.makeText(this, "图片已损坏", Toast.LENGTH_SHORT).show();
-        }
     }
 
     public void getPic(Uri url) {
@@ -169,7 +147,6 @@ public class TimeDetail extends AppCompatActivity {
                 String realPathFromUri = RealPathFromUriUtils.getRealPathFromUri(this, url);
                 //将图片转化为Bitmap
                 Bitmap bitmap = BitmapFactory.decodeFile(realPathFromUri);
-
                 //获取图片长宽
                 int bwidth = bitmap.getWidth();
                 int bHeight = bitmap.getHeight();
@@ -192,7 +169,6 @@ public class TimeDetail extends AppCompatActivity {
         }
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -209,7 +185,6 @@ public class TimeDetail extends AppCompatActivity {
             }
         } else if (requestCode == TIME_EDIT_REQUEST_CODE && resultCode == TIME_OK) {
             //此时为修改倒计时项
-            //String str=data.getStringExtra("day");
             times.get(position).setTitle(data.getStringExtra("title"));
             times.get(position).setRemark(data.getStringExtra("remark"));
             times.get(position).setYear(data.getStringExtra("year"));
@@ -217,30 +192,30 @@ public class TimeDetail extends AppCompatActivity {
             times.get(position).setDay(data.getStringExtra("day"));
             times.get(position).setTag(data.getStringExtra("tag"));
             times.get(position).setReset(data.getStringExtra("reset"));
-            times.get(position).setTimeImgPath(data.getStringExtra("image"));
-
             Intent intent = new Intent(TimeDetail.this, HomeFragment.class);
             finish();
         } else if (requestCode == GALLERY_REQUEST_CODE) {
             if (data != null) {
                 getPic(data.getData());
             }
-
         }
     }
 
-    //保存bitmap到本地
+
+    /* 保存bitmap到本地
+     * @param context
+     * @param mBitmap
+     * @return
+     */
     public static String saveBitmap(Context context, Bitmap mBitmap, String title) {
         String savePath;
         File filePic;
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            //存储路径
             savePath = "/sdcard/Mytime/pic/";
         } else {
             savePath = context.getApplicationContext().getFilesDir().getAbsolutePath() + "/Mytime/pic/";
         }
         try {
-            //设置图片的保存路径
             filePic = new File(savePath + title + ".jpg");
             if (!filePic.exists()) {
                 filePic.getParentFile().mkdirs();
@@ -255,7 +230,6 @@ public class TimeDetail extends AppCompatActivity {
             e.printStackTrace();
             return null;
         }
-        //返回存储图片的绝对路径
         return filePic.getAbsolutePath();
     }
 }
