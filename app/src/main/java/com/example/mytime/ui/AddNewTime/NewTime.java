@@ -1,14 +1,22 @@
 package com.example.mytime.ui.AddNewTime;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -19,24 +27,35 @@ import android.widget.Toast;
 import com.example.mytime.MyTime;
 import com.example.mytime.R;
 import com.example.mytime.ui.home.HomeFragment;
+import com.example.mytime.ui.home.RealPathFromUriUtils;
+import com.example.mytime.ui.home.TimeDetail;
 
+import java.io.File;
 import java.util.Calendar;
 
+import static com.example.mytime.ui.about.AboutFragment.CAMERA_REQUEST_CODE;
 import static com.example.mytime.ui.home.HomeFragment.times;
+import static com.example.mytime.ui.home.TimeDetail.GALLERY_REQUEST_CODE;
+import static com.example.mytime.ui.home.TimeDetail.saveBitmap;
 
 public class NewTime extends AppCompatActivity {
     public static final int CONTEXT_ITEM_NEW = 1;
     public static final int CONTEXT_ITEM_EDIT = 2;
     public static final int TIME_OK = 100;
     final String resetItems[] = {"每周", "每月", "每年", "自定义", "无"};
+    final String tableItems[] = {"学习", "生日", "工作", "节假日", "自定义", "无"};
+
     ConstraintLayout data, reset, image, add_table;
-    TextView data2, reset2, add_table2;
+    TextView data2, reset2, add_table2,image2;
     EditText et_title, et_remark;
     Button save;
-    static int flag = -1;
-    int position = -1;
-    MyTime myTime = null;
+    String oldPicPath="";
 
+    static int flag = -1,havePicFlag=0;
+    int position = -1;
+
+    MyTime myTime = null;
+    Bitmap bitmap;
     String myYear = "", myMonth = "", myDayOfMonth = "";
     String chooseTag = "5", chooseReset = "4";
 
@@ -46,7 +65,6 @@ public class NewTime extends AppCompatActivity {
         //隐藏头部
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_new_time);
-
         init();
     }
 
@@ -58,6 +76,7 @@ public class NewTime extends AppCompatActivity {
         data2 = findViewById(R.id.tv_data2);
         reset2 = findViewById(R.id.tv_reset2);
         add_table2 = findViewById(R.id.tv_add_table2);
+        image2=findViewById(R.id.tv_image2);
         save = findViewById(R.id.btn_save);
         et_title = findViewById(R.id.et_title);
         et_remark = findViewById(R.id.et_remark);
@@ -65,21 +84,29 @@ public class NewTime extends AppCompatActivity {
 
         Intent intent = getIntent();
         position = intent.getIntExtra("position", -1);
-        String title = intent.getStringExtra("title");
 
         if (position == -1) {
             //新建item
             flag = CONTEXT_ITEM_NEW;
         } else {
+            //修改item
             flag = CONTEXT_ITEM_EDIT;
             myTime = times.get(position);
             et_title.setText(myTime.getTitle());
             et_remark.setText(myTime.getRemark());
+
             myYear = myTime.getYear();
             myMonth = myTime.getMonth();
             myDayOfMonth = myTime.getDay();
+            chooseTag = myTime.getTag();
+            chooseReset = myTime.getReset();
+            oldPicPath=myTime.getTimeImgPath();
+
             data2.setText(myYear + "年" + myMonth + "月" + myDayOfMonth + "日");
-            reset2.setText(resetItems[Integer.parseInt(myTime.getTag())]);
+            reset2.setText(resetItems[Integer.parseInt(myTime.getReset())]);
+            add_table2.setText(tableItems[Integer.parseInt(myTime.getTag())]);
+            if(!oldPicPath.equals(""))
+                image2.setText("已选择图片");
         }
 
         data.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +122,7 @@ public class NewTime extends AppCompatActivity {
                                 calendar.set(Calendar.MONTH, month);
                                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                                 myYear = year + "";
-                                myMonth = month + "";
+                                myMonth = (month +1)+ "";
                                 myDayOfMonth = dayOfMonth + "";
                                 data2.setText(myYear + "年" + myMonth + "月" + myDayOfMonth + "日");
                             }
@@ -103,7 +130,6 @@ public class NewTime extends AppCompatActivity {
                         calendar.get(Calendar.YEAR),
                         calendar.get(Calendar.MONTH),
                         calendar.get(Calendar.DAY_OF_MONTH));
-
                 dialog.show();
             }
         });
@@ -135,7 +161,6 @@ public class NewTime extends AppCompatActivity {
                                     reset2.setText(resetItems[Integer.parseInt(chooseReset)]);
                                 } else {
                                     dialog.dismiss();
-
                                     View view = getLayoutInflater().inflate(R.layout.new_time_coustom_time, null);
                                     final EditText et_reset = (EditText) view.findViewById(R.id.et_custom_time_reset);
 
@@ -171,7 +196,23 @@ public class NewTime extends AppCompatActivity {
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (ContextCompat.checkSelfPermission(NewTime.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED ||
+                        ContextCompat.checkSelfPermission(NewTime.this,
+                                Manifest.permission.READ_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {   //权限还没有授予，需要在这里写申请权限的代码
+                    // 第二个参数是一个字符串数组，里面是你需要申请的权限 可以设置申请多个权限
+                    // 最后一个参数是标志你这次申请的权限，该常量在onRequestPermissionsResult中使用到
+                    ActivityCompat.requestPermissions(NewTime.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_REQUEST_CODE);
+                } else {
+                    //权限已经被授予，在这里直接写要执行的相应方法即可
+                    Intent imgIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    imgIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                    imgIntent.setType("image/*");
+                    startActivityForResult(imgIntent, GALLERY_REQUEST_CODE);
+                }
             }
         });
 
@@ -179,7 +220,6 @@ public class NewTime extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //弹出对话框
-                final String tableItems[] = {"学习", "生日", "工作", "节假日", "自定义", "无"};
                 AlertDialog dialog = new AlertDialog.Builder(NewTime.this)
                         .setIcon(R.drawable.ic_table)//设置标题的图片
                         .setTitle("标签")//设置对话框的标题
@@ -245,6 +285,18 @@ public class NewTime extends AppCompatActivity {
                     Toast.makeText(NewTime.this, "请选择日期", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent = new Intent(NewTime.this, HomeFragment.class);
+                    if(havePicFlag==1){
+                        String imgPath=saveBitmap(NewTime.this,bitmap,title);
+                        //修改图片
+                        intent.putExtra("image", imgPath);
+                    }
+                    else{
+                        if(oldPicPath.equals(""))   //表示新建time
+                            intent.putExtra("image", "");
+                        else
+                            intent.putExtra("image", oldPicPath); //表示未修改图片
+                    }
+
                     intent.putExtra("title", title);
                     intent.putExtra("remark", remark);
                     intent.putExtra("year", myYear);
@@ -253,12 +305,29 @@ public class NewTime extends AppCompatActivity {
                     intent.putExtra("reset", chooseReset);
                     intent.putExtra("tag", chooseTag);
                     intent.putExtra("position", position);
+
                     setResult(TIME_OK, intent);
                     finish();
                 }
             }
         });
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GALLERY_REQUEST_CODE) {
+            if (data != null) {
+                //获取被选图片的url
+                String realPathFromUri = RealPathFromUriUtils.getRealPathFromUri(this, data.getData());
+                //将图片转化为Bitmap
+                bitmap = BitmapFactory.decodeFile(realPathFromUri);
+                havePicFlag=1;  //havePicFlag=1标志新建time时选择了图片，或者在修改的时候选择了新的图片
+                image2.setText("已选择图片");
+            } else{
+                Toast.makeText(this, "图片损坏，请重新选择", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 }

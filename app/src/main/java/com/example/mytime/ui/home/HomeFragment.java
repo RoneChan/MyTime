@@ -29,9 +29,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static com.example.mytime.MyTime.CalculateLastDay;
+
 public class HomeFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
     private MyHomeFragmentAdapter myHomeFragmentAdapter;
     public static ArrayList<MyTime> times=new ArrayList<MyTime>() ;
     ListView listView;
@@ -135,35 +136,65 @@ public class HomeFragment extends Fragment {
                 // img.setImageResource(time.getPictureId());
                 viewHolder.remark.setText(time.getRemark());
 
-                /*
-                *计算相隔天数
-                 */
-                Calendar calendar = Calendar.getInstance();
-                //获取系统的日期
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH)+1;
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-                String now=year+"-"+month+"-"+day;
-                String setTime=time.getYear()+"-"+time.getMonth()+"-"+time.getDay();
-                DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
-
-                try {
-                    Date nowDate=df.parse(now);
-                    Date setTimeDate=df.parse(setTime);
-                    //System.out.println((nowDate.getTime()-setTimeDate.getTime())/(60*60*1000*24));
-                    long lastday= (long) ((setTimeDate.getTime()-nowDate.getTime())/(60*60*1000*24));
-                    if (lastday >= 0) {
-                        viewHolder.last_day.setText("只剩\n"+lastday+"天");
-                    }else{
-                        viewHolder.last_day.setText("已经\n"+Math.abs(lastday)+"天");
+                long lastDay = CalculateLastDay(time);
+                if (lastDay >= 0) {
+                    viewHolder.last_day.setText("只剩\n"+lastDay+"天");
+                }else{
+                    //final String resetItems[] = {"每周", "每月", "每年", "自定义", "无"};
+                    Calendar calendar= Calendar.getInstance();
+                    calendar.set(Calendar.YEAR, Integer.parseInt(time.getYear()));
+                    calendar.set(Calendar.MONTH,  Integer.parseInt(time.getMonth()));
+                    calendar.set(Calendar.DAY_OF_MONTH,  Integer.parseInt(time.getDay()));
+                    switch (time.getReset()) {
+                        case "0"://每周重复
+                        {
+                            calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + 7);
+                            //获取更新后的日期
+                            int year = calendar.get(Calendar.YEAR);
+                            int month = calendar.get(Calendar.MONTH) + 1;
+                            int day = calendar.get(Calendar.DAY_OF_MONTH);
+                            times.get(position).setDay(day + "");
+                            times.get(position).setMonth(month + "");
+                            times.get(position).setYear(year + "");
+                            myHomeFragmentAdapter.notifyDataSetChanged();
+                        }
+                            break;
+                        case "1"://每月重复
+                            String passMonth=time.getMonth();
+                            String newMonth=(Integer.parseInt(passMonth)+1)+"";
+                            time.setMonth(newMonth);
+                            myHomeFragmentAdapter.notifyDataSetChanged();
+                            break;
+                        case "2"://每年重复
+                            String passYear=time.getMonth();
+                            String newYear=(Integer.parseInt(passYear)+1)+"";
+                            time.setMonth(newYear);
+                            myHomeFragmentAdapter.notifyDataSetChanged();
+                        break;
+                        case "4"://无重复
+                            calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + 0);
+                            break;
+                        default://自定义
+                        {
+                            calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + Integer.parseInt(time.getTag()));
+                            //获取更新后的日期
+                            int year = calendar.get(Calendar.YEAR);
+                            int month = calendar.get(Calendar.MONTH) + 1;
+                            int day = calendar.get(Calendar.DAY_OF_MONTH);
+                            time.setDay(day + "");
+                            time.setMonth(month + "");
+                            time.setYear(year + "");
+                            myHomeFragmentAdapter.notifyDataSetChanged();
+                        }
+                            break;
                     }
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                    long newLastDay = CalculateLastDay(time);
+                    viewHolder.last_day.setText("已经\n"+Math.abs(newLastDay)+"天");
                 }
             }
             return convertView;
         }
+
         //存放复用的组件
         class ViewHolder {
             TextView title, data, remark,last_day;

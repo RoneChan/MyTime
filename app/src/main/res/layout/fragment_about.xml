@@ -6,36 +6,18 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/text_gallery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
+        android:id="@+id/text_about"
+        android:layout_width="341dp"
+        android:layout_height="217dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginEnd="35dp"
+        android:layout_marginRight="35dp"
+        android:background="@drawable/detail_shape"
+        android:text="\n\n\n\n\n      本软件用为移动安卓课程的课程项目使用。\n      由软件工程学生陈咏仪2017052486编写。"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="269dp"
-        android:layout_height="403dp"
-        android:layout_marginStart="70dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="39dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_gallery"
-        app:srcCompat="@color/colorPrimaryDark" />
-
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="400dp"
-        android:layout_height="220dp"
-        android:layout_marginTop="31dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4"
-        app:srcCompat="@color/colorAccent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
