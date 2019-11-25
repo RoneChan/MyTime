@@ -1,10 +1,15 @@
-package com.example.mytime;
+package com.example.mytime.control;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Environment;
 
+import com.example.mytime.MyTime;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
@@ -55,5 +60,36 @@ public class FileDataStream {
         }
         return myTimes;
 
+    }
+
+    /* 保存bitmap到本地
+     * @param context
+     * @param mBitmap
+     * @return
+     */
+    public static String saveBitmap(Context context, Bitmap mBitmap, String title) {
+        String savePath;
+        File filePic;
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            savePath = "/sdcard/Mytime/pic/";
+        } else {
+            savePath = context.getApplicationContext().getFilesDir().getAbsolutePath() + "/Mytime/pic/";
+        }
+        try {
+            filePic = new File(savePath + title + ".jpg");
+            if (!filePic.exists()) {
+                filePic.getParentFile().mkdirs();
+                filePic.createNewFile();
+            }
+            FileOutputStream fos = new FileOutputStream(filePic);
+            //压缩文件
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return filePic.getAbsolutePath();
     }
 }

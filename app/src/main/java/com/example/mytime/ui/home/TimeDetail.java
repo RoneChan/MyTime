@@ -6,14 +6,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +25,8 @@ import com.example.mytime.R;
 import com.example.mytime.ui.AddNewTime.NewTime;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
+import static com.example.mytime.control.FileDataStream.saveBitmap;
 import static com.example.mytime.MainActivity.TIME_NEW_REQUEST_CODE;
 import static com.example.mytime.ui.AddNewTime.NewTime.TIME_OK;
 import static com.example.mytime.ui.about.AboutFragment.CAMERA_REQUEST_CODE;
@@ -201,35 +198,4 @@ public class TimeDetail extends AppCompatActivity {
         }
     }
 
-
-    /* 保存bitmap到本地
-     * @param context
-     * @param mBitmap
-     * @return
-     */
-    public static String saveBitmap(Context context, Bitmap mBitmap, String title) {
-        String savePath;
-        File filePic;
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            savePath = "/sdcard/Mytime/pic/";
-        } else {
-            savePath = context.getApplicationContext().getFilesDir().getAbsolutePath() + "/Mytime/pic/";
-        }
-        try {
-            filePic = new File(savePath + title + ".jpg");
-            if (!filePic.exists()) {
-                filePic.getParentFile().mkdirs();
-                filePic.createNewFile();
-            }
-            FileOutputStream fos = new FileOutputStream(filePic);
-            //压缩文件
-            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return filePic.getAbsolutePath();
-    }
 }
