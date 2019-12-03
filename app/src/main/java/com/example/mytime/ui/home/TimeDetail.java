@@ -122,7 +122,7 @@ public class TimeDetail extends AppCompatActivity {
         tv_date.setText(year + "年" + month + "月" + day + "日");
         tv_remark.setText(remark);
 
-        //s设置用户保存的图片
+        //显示用户保存的图片
         if (!(myTime.getTimeImgPath()).equals("")) {
             timeVitmap = BitmapFactory.decodeFile(myTime.getTimeImgPath());
             int bwidth = timeVitmap.getWidth();

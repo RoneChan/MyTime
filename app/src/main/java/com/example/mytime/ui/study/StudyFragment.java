@@ -7,12 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.mytime.MyFragmentAdapter;
+import com.example.mytime.control.MyFragmentAdapter;
 import com.example.mytime.MyTime;
 import com.example.mytime.R;
 import com.example.mytime.ui.home.TimeDetail;

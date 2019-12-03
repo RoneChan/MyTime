@@ -3,11 +3,16 @@ package com.example.mytime;
 import android.graphics.Bitmap;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MyTime implements Serializable {
-    private String title,year,month,day,remark;
-    private String tag="5",reset="";
-    private String timeImgPath="";
+    private String title, year, month, day, remark;
+    private String tag = "5", reset = "4";
+    private String timeImgPath = "";
 
     public MyTime(String title, String year, String month, String day, String remark, String tag, String reset) {
         this.title = title;
@@ -27,7 +32,7 @@ public class MyTime implements Serializable {
         this.remark = remark;
         this.tag = tag;
         this.reset = reset;
-        this.timeImgPath=timeImgPath;
+        this.timeImgPath = timeImgPath;
     }
 
     public String getTimeImgPath() {
@@ -82,7 +87,8 @@ public class MyTime implements Serializable {
         return day;
     }
 
-    public void setDay(String dayday) {
+    public void setDay(String day) {
+
         this.day = day;
     }
 
@@ -92,5 +98,32 @@ public class MyTime implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+
+    public static long CalculateLastDay(MyTime time) {
+        /*
+         *计算相隔天数
+         */
+        long lastday = 0;
+        Calendar calendar = Calendar.getInstance();
+        //获取系统的日期
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        String now = year + "-" + month + "-" + day;
+        String setTime = time.getYear() + "-" + time.getMonth() + "-" + time.getDay();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            Date nowDate = df.parse(now);
+            Date setTimeDate = df.parse(setTime);
+            lastday = (long) ((setTimeDate.getTime() - nowDate.getTime()) / (60 * 60 * 1000 * 24));
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return lastday;
     }
 }

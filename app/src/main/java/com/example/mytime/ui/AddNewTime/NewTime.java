@@ -27,14 +27,15 @@ import android.widget.Toast;
 import com.example.mytime.MyTime;
 import com.example.mytime.R;
 import com.example.mytime.ui.home.HomeFragment;
+
 import java.io.FileDescriptor;
 import java.util.Calendar;
 
+import static com.example.mytime.control.FileDataStream.saveBitmap;
+import static com.example.mytime.MyTime.CalculateLastDay;
 import static com.example.mytime.ui.about.AboutFragment.CAMERA_REQUEST_CODE;
 import static com.example.mytime.ui.home.HomeFragment.times;
 import static com.example.mytime.ui.home.TimeDetail.GALLERY_REQUEST_CODE;
-import static com.example.mytime.ui.home.TimeDetail.saveBitmap;
-//import static com.example.mytime.ui.home.TimeDetail.saveBitmap;
 
 public class NewTime extends AppCompatActivity {
     public static final int CONTEXT_ITEM_NEW = 1;
@@ -44,12 +45,12 @@ public class NewTime extends AppCompatActivity {
     final String tableItems[] = {"学习", "生日", "工作", "节假日", "自定义", "无"};
 
     ConstraintLayout data, reset, image, add_table;
-    TextView data2, reset2, add_table2,image2;
+    TextView data2, reset2, add_table2, image2;
     EditText et_title, et_remark;
     Button save;
-    String oldPicPath="";
+    String oldPicPath = "";
 
-    static int flag = -1,havePicFlag=0;
+    static int flag = -1, havePicFlag = 0;
     int position = -1;
 
     MyTime myTime = null;
@@ -74,7 +75,7 @@ public class NewTime extends AppCompatActivity {
         data2 = findViewById(R.id.tv_data2);
         reset2 = findViewById(R.id.tv_reset2);
         add_table2 = findViewById(R.id.tv_add_table2);
-        image2=findViewById(R.id.tv_image2);
+        image2 = findViewById(R.id.tv_image2);
         save = findViewById(R.id.btn_save);
         et_title = findViewById(R.id.et_title);
         et_remark = findViewById(R.id.et_remark);
@@ -98,12 +99,34 @@ public class NewTime extends AppCompatActivity {
             myDayOfMonth = myTime.getDay();
             chooseTag = myTime.getTag();
             chooseReset = myTime.getReset();
-            oldPicPath=myTime.getTimeImgPath();
+            oldPicPath = myTime.getTimeImgPath();
 
+            switch (chooseReset) {
+                case "7":
+                    chooseReset = "0";
+                    break;
+                case "30":
+                    chooseReset = "1";
+                    break;
+                case "365":
+                    chooseReset = "2";
+                    break;
+                case "-1":
+                    chooseReset="4";
+                default:
+                    chooseReset = "3";
+                    break;
+            }
             data2.setText(myYear + "年" + myMonth + "月" + myDayOfMonth + "日");
-            reset2.setText(resetItems[Integer.parseInt(myTime.getReset())]);
-            add_table2.setText(tableItems[Integer.parseInt(myTime.getTag())]);
-            if(!oldPicPath.equals(""))
+            String test=resetItems[Integer.parseInt(chooseReset)];
+            if(chooseReset.equals("3"))
+                reset2.setText(chooseReset + "天");
+            else
+                reset2.setText(resetItems[Integer.parseInt(chooseReset)]);
+
+            add_table2.setText(tableItems[Integer.parseInt(chooseTag)]);
+
+            if (!oldPicPath.equals(""))
                 image2.setText("已选择图片");
         }
 
@@ -120,7 +143,7 @@ public class NewTime extends AppCompatActivity {
                                 calendar.set(Calendar.MONTH, month);
                                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                                 myYear = year + "";
-                                myMonth = (month +1)+ "";
+                                myMonth = (month + 1) + "";
                                 myDayOfMonth = dayOfMonth + "";
                                 data2.setText(myYear + "年" + myMonth + "月" + myDayOfMonth + "日");
                             }
@@ -133,6 +156,7 @@ public class NewTime extends AppCompatActivity {
         });
 
         reset.setOnClickListener(new View.OnClickListener() {
+            int chooseItem;
             @Override
             public void onClick(View v) {
                 //弹出tag对话框
@@ -142,7 +166,24 @@ public class NewTime extends AppCompatActivity {
                         .setSingleChoiceItems(resetItems, 4, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                chooseReset = which + "";
+                               chooseReset=which+"";
+                               chooseItem=which;
+                                switch (which) {
+                                    case 0:
+                                        chooseReset = "7";
+                                        break;
+                                    case 1:
+                                        chooseReset = "30";
+                                        break;
+                                    case 2:
+                                        chooseReset = "365";
+                                        break;
+                                    case 4:
+                                        chooseReset="-1";
+                                    default:
+                                        chooseReset = which + "";
+                                        break;
+                                }
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -155,8 +196,9 @@ public class NewTime extends AppCompatActivity {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (Integer.parseInt(chooseReset) != 3) {
-                                    reset2.setText(resetItems[Integer.parseInt(chooseReset)]);
+                                if (chooseItem != 3) {
+                                    reset2.setText(resetItems[chooseItem]);
+                                    //{"每周", "每月", "每年", "自定义", "无"};
                                 } else {
                                     dialog.dismiss();
                                     View view = getLayoutInflater().inflate(R.layout.new_time_coustom_time, null);
@@ -176,7 +218,7 @@ public class NewTime extends AppCompatActivity {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     String content = et_reset.getText().toString();
-                                                    reset2.setText(content);
+                                                    reset2.setText(content + "天");
                                                     chooseReset = content;
                                                     dialog.dismiss();
                                                 }
@@ -283,18 +325,68 @@ public class NewTime extends AppCompatActivity {
                     Toast.makeText(NewTime.this, "请选择日期", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent = new Intent(NewTime.this, HomeFragment.class);
-                    if(havePicFlag==1){
-                        String imgPath=saveBitmap(NewTime.this,bitmap,title);
+
+                    if (havePicFlag == 1) {
+                        String imgPath = saveBitmap(NewTime.this, bitmap, title);
                         //修改图片
                         intent.putExtra("image", imgPath);
-                    }
-                    else{
-                        if(oldPicPath.equals(""))   //表示新建time
+                    } else {
+                        if (oldPicPath.equals(""))   //表示新建time
                             intent.putExtra("image", "");
                         else
                             intent.putExtra("image", oldPicPath); //表示未修改图片
                     }
 
+
+                    MyTime tempTime = new MyTime(title, myYear, myMonth, myDayOfMonth, remark, chooseTag, chooseReset);
+                    long lastDay = CalculateLastDay(tempTime);
+                    /*
+                    if (lastDay < 0) {
+                        //final String resetItems[] = {"每周", "每月", "每年", "自定义", "无"};
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(Calendar.YEAR, Integer.parseInt(tempTime.getYear()));
+                        calendar.set(Calendar.MONTH, Integer.parseInt(tempTime.getMonth()));
+                        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(tempTime.getDay()));
+                        switch (tempTime.getReset()) {
+                            case "0"://每周重复
+                            {
+                                int delayDay = (int) Math.abs(lastDay) / 7 + 1;//计算往后推迟多少个星期
+                                calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + (delayDay * 7));
+
+                                //获取更新后的日期
+                                myYear = calendar.get(Calendar.YEAR)+"";
+                                myMonth = calendar.get(Calendar.MONTH)+"" ;
+                                myDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)-1+"";
+                            }
+                            break;
+                            case "1"://每月重复
+                                int delayMoth = (int) Math.abs(lastDay) / 28 + 1;//计算往后推迟多少月
+                                String passMonth = tempTime.getMonth();
+                                String newMonth = (Integer.parseInt(passMonth) + delayMoth) + "";
+                                myDayOfMonth = newMonth;
+                                break;
+                            case "2"://每年重复
+                                int delayYear = (int) Math.abs(lastDay) / 365 + 1;//计算往后推迟多少年
+                                String passYear = tempTime.getMonth();
+                                String newYear = (Integer.parseInt(passYear) + delayYear) + "";
+                                myYear = newYear;
+                                break;
+                            case "4"://无重复
+                                calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + 0);
+                                break;
+                            default://自定义
+                            {
+                                calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + Integer.parseInt(tempTime.getReset()));
+                                //获取更新后的日期
+                                myYear = calendar.get(Calendar.YEAR)+"";
+                                myMonth = calendar.get(Calendar.MONTH) +"";
+                                myDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)+"";
+                            }
+                            break;
+                        }
+                    }
+
+                     */
                     intent.putExtra("title", title);
                     intent.putExtra("remark", remark);
                     intent.putExtra("year", myYear);
@@ -325,9 +417,9 @@ public class NewTime extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                havePicFlag=1;  //havePicFlag=1标志新建time时选择了图片，或者在修改的时候选择了新的图片
+                havePicFlag = 1;  //havePicFlag=1标志新建time时选择了图片，或者在修改的时候选择了新的图片
                 image2.setText("已选择图片");
-            } else{
+            } else {
                 Toast.makeText(this, "图片损坏，请重新选择", Toast.LENGTH_SHORT).show();
             }
         }

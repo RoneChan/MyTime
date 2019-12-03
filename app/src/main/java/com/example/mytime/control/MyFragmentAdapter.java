@@ -20,15 +20,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.example.mytime.MyTime.CalculateLastDay;
+
 public class MyFragmentAdapter extends ArrayAdapter<MyTime> {
 
     int resource;
-    ArrayList<MyTime> myTimes=new ArrayList<MyTime>();
+    ArrayList<MyTime> myTimes = new ArrayList<MyTime>();
 
     public MyFragmentAdapter(@NonNull Context context, int resource, @NonNull ArrayList<MyTime> objects) {
         super(context, resource);
         this.resource = resource;
-        myTimes=objects;
+        myTimes = objects;
     }
 
     public MyFragmentAdapter(@NonNull Context context, int resource) {
@@ -62,7 +64,7 @@ public class MyFragmentAdapter extends ArrayAdapter<MyTime> {
             viewHolder.title = (TextView) convertView.findViewById(R.id.tv_home_title);
             viewHolder.data = (TextView) convertView.findViewById(R.id.tv_home_data);
             viewHolder.remark = (TextView) convertView.findViewById(R.id.tv_home_remark);
-            viewHolder.last_day=(TextView) convertView.findViewById(R.id.tv_last_day);
+            viewHolder.last_day = (TextView) convertView.findViewById(R.id.tv_last_day);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -71,49 +73,82 @@ public class MyFragmentAdapter extends ArrayAdapter<MyTime> {
         //设置控件的值
         MyTime time = this.getItem(position);
         if (time != null) {
+            /*
             viewHolder.title.setText(time.getTitle());
             viewHolder.data.setText(time.getYear() + "年" + time.getMonth() + "月" + time.getDay() + "日");
             // img.setImageResource(time.getPictureId());
             viewHolder.remark.setText(time.getRemark());
-            long lastDay=CaculateLastDay(time);
-            if (lastDay >= 0) {
-                viewHolder.last_day.setText("只剩\n"+lastDay+"天");
-            }else{
-                viewHolder.last_day.setText("已经\n"+Math.abs(lastDay)+"天");
+
+             */
+            long lastDay = CalculateLastDay(time);
+            if (lastDay < 0) {
+                //final String resetItems[] = {"每周", "每月", "每年", "自定义", "无"};
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, Integer.parseInt(time.getYear()));
+                calendar.set(Calendar.MONTH, Integer.parseInt(time.getMonth()) - 1);
+                calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(time.getDay()));
+
+                String myYear2 = calendar.get(Calendar.MONTH) + "";
+                String myYear = "", myMonth = "", myDayOfMonth = "";
+                switch (time.getReset()) {
+                    case "7"://每周重复
+                    {
+                        int delayDay = (int) Math.abs(lastDay) / 7 + 1;//计算往后推迟多少个星期
+                        calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + (delayDay * 7));
+                        //获取更新后的日期
+                        myYear = calendar.get(Calendar.YEAR) + "";
+                        myMonth = calendar.get(Calendar.MONTH) + 1 + "";
+                        myDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH) + "";
+                        myTimes.get(position).setYear(myYear);
+                        myTimes.get(position).setMonth(myMonth);
+                        myTimes.get(position).setDay(myDayOfMonth);
+                    }
+                    break;
+                    case "30"://每月重复
+                        int delayMoth = (int) Math.abs(lastDay) / 28 + 1;//计算往后推迟多少月
+                        String passMonth = time.getMonth();
+                        String newMonth = (Integer.parseInt(passMonth) + delayMoth) + "";
+                        myTimes.get(position).setMonth(newMonth);
+                        break;
+                    case "365"://每年重复
+                        int delayYear = (int) Math.abs(lastDay) / 365 + 1;//计算往后推迟多少年
+                        String passYear = time.getYear();
+                        String newYear = (Integer.parseInt(passYear) + delayYear) + "";
+                        myTimes.get(position).setYear(newYear);
+                        break;
+                    case "-1"://无重复
+                        break;
+                    default://自定义
+                    {
+                        int delayDay = (int) Math.abs(lastDay) / Integer.parseInt(time.getReset()) + 1;//计算往后推迟多少个周期
+                        calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + delayDay*Integer.parseInt(time.getReset()));
+                        //获取更新后的日期
+                        myYear = calendar.get(Calendar.YEAR) + "";
+                        myMonth = calendar.get(Calendar.MONTH) + 1+"";
+                        myDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH) + "";
+                        myTimes.get(position).setYear(myYear);
+                        myTimes.get(position).setMonth(myMonth);
+                        myTimes.get(position).setDay(myDayOfMonth);
+                    }
+                    break;
+                }
             }
+            lastDay = CalculateLastDay(myTimes.get(position));
+            if (lastDay >= 0) {
+                viewHolder.last_day.setText("只剩\n" + lastDay + "天");
+            } else {
+                viewHolder.last_day.setText("已经\n" + Math.abs(lastDay) + "天");
+            }
+            viewHolder.title.setText(time.getTitle());
+            viewHolder.data.setText(myTimes.get(position).getYear() + "年" + myTimes.get(position).getMonth() + "月" + myTimes.get(position).getDay() + "日");
+            viewHolder.remark.setText(time.getRemark());
         }
         return convertView;
     }
 
-
-    public static long CaculateLastDay(MyTime time){
-        /*
-         *计算相隔天数
-         */
-        long lastday=0;
-        Calendar calendar = Calendar.getInstance();
-        //获取系统的日期
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH)+1;
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        String now=year+"-"+month+"-"+day;
-        String setTime=time.getYear()+"-"+time.getMonth()+"-"+time.getDay();
-        DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            Date nowDate=df.parse(now);
-            Date setTimeDate=df.parse(setTime);
-            lastday = (long) ((setTimeDate.getTime()-nowDate.getTime())/(60*60*1000*24));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return lastday;
-    }
-
-
     //存放复用的组件
     class ViewHolder {
-        TextView title, data, remark,last_day;
+        TextView title, data, remark, last_day;
     }
 }
 

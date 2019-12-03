@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+
 import static com.example.mytime.ui.AddNewTime.NewTime.TIME_OK;
 import static com.example.mytime.ui.home.HomeFragment.times;
 
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_help, R.id.nav_about,
-                R.id.nav_tools, R.id.nav_study, R.id.nav_birth, R.id.nav_work,R.id.nav_vocation,R.id.nav_self_def)
+                R.id.nav_tools, R.id.nav_study, R.id.nav_birth, R.id.nav_work, R.id.nav_vocation, R.id.nav_self_def)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -85,10 +86,10 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == TIME_NEW_REQUEST_CODE && resultCode == TIME_OK) {
-            MyTime time = new MyTime(data.getStringExtra("title"), data.getStringExtra("year")
-                    , data.getStringExtra("month"), data.getStringExtra("day"), data.getStringExtra("remark")
-                    , data.getStringExtra("tag"), data.getStringExtra("reset"));
-            times.add(time);
+             MyTime time = new MyTime(data.getStringExtra("title"), data.getStringExtra("year")
+                        , data.getStringExtra("month"), data.getStringExtra("day"), data.getStringExtra("remark")
+                        , data.getStringExtra("tag"), data.getStringExtra("reset"),data.getStringExtra("image"));
+                times.add(time);
         }
 
     }
