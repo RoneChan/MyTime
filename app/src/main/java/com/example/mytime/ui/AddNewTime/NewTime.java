@@ -337,56 +337,6 @@ public class NewTime extends AppCompatActivity {
                             intent.putExtra("image", oldPicPath); //表示未修改图片
                     }
 
-
-                    MyTime tempTime = new MyTime(title, myYear, myMonth, myDayOfMonth, remark, chooseTag, chooseReset);
-                    long lastDay = CalculateLastDay(tempTime);
-                    /*
-                    if (lastDay < 0) {
-                        //final String resetItems[] = {"每周", "每月", "每年", "自定义", "无"};
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(Calendar.YEAR, Integer.parseInt(tempTime.getYear()));
-                        calendar.set(Calendar.MONTH, Integer.parseInt(tempTime.getMonth()));
-                        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(tempTime.getDay()));
-                        switch (tempTime.getReset()) {
-                            case "0"://每周重复
-                            {
-                                int delayDay = (int) Math.abs(lastDay) / 7 + 1;//计算往后推迟多少个星期
-                                calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + (delayDay * 7));
-
-                                //获取更新后的日期
-                                myYear = calendar.get(Calendar.YEAR)+"";
-                                myMonth = calendar.get(Calendar.MONTH)+"" ;
-                                myDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)-1+"";
-                            }
-                            break;
-                            case "1"://每月重复
-                                int delayMoth = (int) Math.abs(lastDay) / 28 + 1;//计算往后推迟多少月
-                                String passMonth = tempTime.getMonth();
-                                String newMonth = (Integer.parseInt(passMonth) + delayMoth) + "";
-                                myDayOfMonth = newMonth;
-                                break;
-                            case "2"://每年重复
-                                int delayYear = (int) Math.abs(lastDay) / 365 + 1;//计算往后推迟多少年
-                                String passYear = tempTime.getMonth();
-                                String newYear = (Integer.parseInt(passYear) + delayYear) + "";
-                                myYear = newYear;
-                                break;
-                            case "4"://无重复
-                                calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + 0);
-                                break;
-                            default://自定义
-                            {
-                                calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + Integer.parseInt(tempTime.getReset()));
-                                //获取更新后的日期
-                                myYear = calendar.get(Calendar.YEAR)+"";
-                                myMonth = calendar.get(Calendar.MONTH) +"";
-                                myDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)+"";
-                            }
-                            break;
-                        }
-                    }
-
-                     */
                     intent.putExtra("title", title);
                     intent.putExtra("remark", remark);
                     intent.putExtra("year", myYear);

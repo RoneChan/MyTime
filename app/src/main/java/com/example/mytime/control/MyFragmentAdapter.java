@@ -73,13 +73,6 @@ public class MyFragmentAdapter extends ArrayAdapter<MyTime> {
         //设置控件的值
         MyTime time = this.getItem(position);
         if (time != null) {
-            /*
-            viewHolder.title.setText(time.getTitle());
-            viewHolder.data.setText(time.getYear() + "年" + time.getMonth() + "月" + time.getDay() + "日");
-            // img.setImageResource(time.getPictureId());
-            viewHolder.remark.setText(time.getRemark());
-
-             */
             long lastDay = CalculateLastDay(time);
             if (lastDay < 0) {
                 //final String resetItems[] = {"每周", "每月", "每年", "自定义", "无"};
@@ -88,7 +81,6 @@ public class MyFragmentAdapter extends ArrayAdapter<MyTime> {
                 calendar.set(Calendar.MONTH, Integer.parseInt(time.getMonth()) - 1);
                 calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(time.getDay()));
 
-                String myYear2 = calendar.get(Calendar.MONTH) + "";
                 String myYear = "", myMonth = "", myDayOfMonth = "";
                 switch (time.getReset()) {
                     case "7"://每周重复
