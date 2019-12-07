@@ -26,6 +26,7 @@ import com.example.mytime.ui.AddNewTime.NewTime;
 
 import java.io.File;
 
+import static com.example.mytime.MyTime.CalculateLastDay;
 import static com.example.mytime.control.FileDataStream.saveBitmap;
 import static com.example.mytime.MainActivity.TIME_NEW_REQUEST_CODE;
 import static com.example.mytime.ui.AddNewTime.NewTime.TIME_OK;
@@ -39,7 +40,7 @@ public class TimeDetail extends AppCompatActivity {
 
     String title, year, month, day, remark;
     String tag, reset;
-    TextView tv_title, tv_date, tv_remark;
+    TextView tv_title, tv_date, tv_remark,tv_last_day;
     ImageView btn_edit, btn_delete, btn_change_background;
     Bitmap timeVitmap;
     ImageView imageView;
@@ -113,6 +114,7 @@ public class TimeDetail extends AppCompatActivity {
         tv_title = findViewById(R.id.tv_detail_title);
         tv_date = findViewById(R.id.tv_detail_date);
         tv_remark = findViewById(R.id.tv_detail_remark);
+        tv_last_day=findViewById(R.id.tv_last_day);
         btn_edit = findViewById(R.id.btn_home_edit);
         btn_delete = findViewById(R.id.btn_home_delete);
         btn_change_background = findViewById(R.id.btn_home_change_background);
@@ -121,15 +123,21 @@ public class TimeDetail extends AppCompatActivity {
         tv_title.setText(title);
         tv_date.setText(year + "年" + month + "月" + day + "日");
         tv_remark.setText(remark);
+        long LastDay=CalculateLastDay(myTime);
+        if (LastDay >= 0) {
+            tv_last_day.setText("只剩" + LastDay + "天");
+        } else {
+            tv_last_day.setText("已经" + Math.abs(LastDay) + "天");
+        }
 
         //显示用户保存的图片
         if (!(myTime.getTimeImgPath()).equals("")) {
             timeVitmap = BitmapFactory.decodeFile(myTime.getTimeImgPath());
-            int bwidth = timeVitmap.getWidth();
+            int bWidth = timeVitmap.getWidth();
             int bHeight = timeVitmap.getHeight();
             DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
             int width = displayMetrics.widthPixels;
-            int height = width * bHeight / bwidth;
+            int height = width * bHeight / bWidth;
             ViewGroup.LayoutParams para = imageView.getLayoutParams();
             para.height = height;
             imageView.setLayoutParams(para);

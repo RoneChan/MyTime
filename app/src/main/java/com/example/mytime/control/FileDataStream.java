@@ -59,7 +59,6 @@ public class FileDataStream {
             e.printStackTrace();
         }
         return myTimes;
-
     }
 
     /* 保存bitmap到本地

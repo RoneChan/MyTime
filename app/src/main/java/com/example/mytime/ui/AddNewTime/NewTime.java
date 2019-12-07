@@ -57,7 +57,7 @@ public class NewTime extends AppCompatActivity {
     Bitmap bitmap;
     String myYear = "", myMonth = "", myDayOfMonth = "";
     String chooseTag = "5", chooseReset = "4";
-
+    int chooseResetItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,28 +101,31 @@ public class NewTime extends AppCompatActivity {
             chooseReset = myTime.getReset();
             oldPicPath = myTime.getTimeImgPath();
 
+
             switch (chooseReset) {
                 case "7":
-                    chooseReset = "0";
+                    chooseResetItem = 0;
                     break;
                 case "30":
-                    chooseReset = "1";
+                    chooseResetItem = 1;
                     break;
                 case "365":
-                    chooseReset = "2";
+                    chooseResetItem = 2;
                     break;
                 case "-1":
-                    chooseReset="4";
+                    chooseResetItem=4;
+                    break;
                 default:
-                    chooseReset = "3";
+                    chooseResetItem = 3;
                     break;
             }
+            String test=resetItems[chooseResetItem];
             data2.setText(myYear + "年" + myMonth + "月" + myDayOfMonth + "日");
-            String test=resetItems[Integer.parseInt(chooseReset)];
-            if(chooseReset.equals("3"))
+
+            if(chooseResetItem==3)
                 reset2.setText(chooseReset + "天");
             else
-                reset2.setText(resetItems[Integer.parseInt(chooseReset)]);
+                reset2.setText(resetItems[chooseResetItem]);
 
             add_table2.setText(tableItems[Integer.parseInt(chooseTag)]);
 
@@ -163,7 +166,7 @@ public class NewTime extends AppCompatActivity {
                 AlertDialog dialog = new AlertDialog.Builder(NewTime.this)
                         .setIcon(R.drawable.ic_reset)//设置标题的图片
                         .setTitle("周期")//设置对话框的标题
-                        .setSingleChoiceItems(resetItems, 4, new DialogInterface.OnClickListener() {
+                        .setSingleChoiceItems(resetItems, chooseResetItem, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                chooseReset=which+"";
@@ -180,6 +183,7 @@ public class NewTime extends AppCompatActivity {
                                         break;
                                     case 4:
                                         chooseReset="-1";
+                                        break;
                                     default:
                                         chooseReset = which + "";
                                         break;
