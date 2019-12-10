@@ -16,10 +16,7 @@
             android:id="@+id/nav_about"
             android:icon="@drawable/ic_memu_help"
             android:title="@string/menu_about" />
-        <item
-            android:id="@+id/nav_tools"
-            android:icon="@drawable/ic_memu_them"
-            android:title="@string/menu_theme" />
+
     </group>
 
 

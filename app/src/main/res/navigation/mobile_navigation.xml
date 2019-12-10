@@ -23,11 +23,7 @@
         android:label="@string/menu_about"
         tools:layout="@layout/fragment_about" />
 
-    <fragment
-        android:id="@+id/nav_tools"
-        android:name="com.example.mytime.ui.tools.ToolsFragment"
-        android:label="@string/menu_theme"
-        tools:layout="@layout/fragment_tools" />
+
 
     <fragment
         android:id="@+id/nav_study"
