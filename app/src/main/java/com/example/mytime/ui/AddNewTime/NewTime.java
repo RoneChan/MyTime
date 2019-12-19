@@ -33,8 +33,8 @@ import java.util.Calendar;
 
 import static com.example.mytime.control.FileDataStream.saveBitmap;
 import static com.example.mytime.MyTime.CalculateLastDay;
-import static com.example.mytime.ui.about.AboutFragment.CAMERA_REQUEST_CODE;
 import static com.example.mytime.ui.home.HomeFragment.times;
+import static com.example.mytime.ui.home.TimeDetail.CAMERA_REQUEST_CODE;
 import static com.example.mytime.ui.home.TimeDetail.GALLERY_REQUEST_CODE;
 
 public class NewTime extends AppCompatActivity {
@@ -56,8 +56,8 @@ public class NewTime extends AppCompatActivity {
     MyTime myTime = null;
     Bitmap bitmap;
     String myYear = "", myMonth = "", myDayOfMonth = "";
-    String chooseTag = "5", chooseReset = "4";
-    int chooseResetItem;
+    String chooseTag = "5", chooseReset = "-1";
+    int chooseResetItem=4,chooseTagItem=5;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +101,6 @@ public class NewTime extends AppCompatActivity {
             chooseReset = myTime.getReset();
             oldPicPath = myTime.getTimeImgPath();
 
-
             switch (chooseReset) {
                 case "7":
                     chooseResetItem = 0;
@@ -119,6 +118,7 @@ public class NewTime extends AppCompatActivity {
                     chooseResetItem = 3;
                     break;
             }
+
             String test=resetItems[chooseResetItem];
             data2.setText(myYear + "年" + myMonth + "月" + myDayOfMonth + "日");
 
@@ -127,8 +127,18 @@ public class NewTime extends AppCompatActivity {
             else
                 reset2.setText(resetItems[chooseResetItem]);
 
-            add_table2.setText(tableItems[Integer.parseInt(chooseTag)]);
-
+            switch (chooseTag) {
+                case "0": case "1": case "2": case "3": case "5":
+                    chooseTagItem = Integer.parseInt(chooseTag);
+                    break;
+                default:
+                    chooseTagItem = 4;
+                    break;
+            }
+            if(chooseTagItem!=4)
+                add_table2.setText(tableItems[chooseTagItem]);
+            else
+                add_table2.setText(chooseTag);
             if (!oldPicPath.equals(""))
                 image2.setText("已选择图片");
         }
@@ -181,10 +191,10 @@ public class NewTime extends AppCompatActivity {
                                     case 2:
                                         chooseReset = "365";
                                         break;
-                                    case 4:
+                                    case 4:  //无
                                         chooseReset="-1";
                                         break;
-                                    default:
+                                    default: //自定义
                                         chooseReset = which + "";
                                         break;
                                 }
@@ -267,10 +277,11 @@ public class NewTime extends AppCompatActivity {
                 AlertDialog dialog = new AlertDialog.Builder(NewTime.this)
                         .setIcon(R.drawable.ic_table)//设置标题的图片
                         .setTitle("标签")//设置对话框的标题
-                        .setSingleChoiceItems(tableItems, 5, new DialogInterface.OnClickListener() {
+                        .setSingleChoiceItems(tableItems, chooseTagItem, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 chooseTag = which + "";
+                                chooseTagItem=which;
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -282,8 +293,8 @@ public class NewTime extends AppCompatActivity {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (Integer.parseInt(chooseTag) != 4) {
-                                    add_table2.setText(tableItems[Integer.parseInt(chooseTag)]);
+                                if (chooseTagItem != 4) {
+                                    add_table2.setText(tableItems[chooseTagItem]);
                                 } else {
                                     dialog.dismiss();
                                     View view = getLayoutInflater().inflate(R.layout.new_time_coustom_time2, null);

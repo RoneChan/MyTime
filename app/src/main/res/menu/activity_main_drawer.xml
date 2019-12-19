@@ -6,15 +6,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_memu_home"
+            android:icon="@drawable/ic_home"
             android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_help"
-            android:icon="@drawable/ic_memu_tag"
+            android:icon="@drawable/ic_help"
             android:title="@string/menu_help" />
         <item
             android:id="@+id/nav_about"
-            android:icon="@drawable/ic_memu_help"
+            android:icon="@drawable/ic_about"
             android:title="@string/menu_about" />
 
     </group>
@@ -24,23 +24,23 @@
         <menu>
             <item
                 android:id="@+id/nav_study"
-                android:icon="@drawable/ic_memu_set"
+                android:icon="@drawable/ic_study"
                 android:title="学习" />
             <item
                 android:id="@+id/nav_birth"
-                android:icon="@drawable/ic_memu_ques"
+                android:icon="@drawable/ic_birth"
                 android:title="生日" />
             <item
                 android:id="@+id/nav_work"
-                android:icon="@drawable/ic_memu_help"
+                android:icon="@drawable/ic_work"
                 android:title="工作" />
             <item
                 android:id="@+id/nav_vocation"
-                android:icon="@drawable/ic_memu_help"
+                android:icon="@drawable/ic_vocation"
                 android:title="节假日" />
             <item
                 android:id="@+id/nav_self_def"
-                android:icon="@drawable/ic_memu_help"
+                android:icon="@drawable/ic_self"
                 android:title="自定义" />
         </menu>
     </item>

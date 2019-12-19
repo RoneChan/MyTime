@@ -35,9 +35,10 @@ public class SelfDefineFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_self_define, container, false);
+        String str="0,1,2,3,5";
         for (MyTime time : times) {
             String tag = time.getTag();
-            if (tag.equals("4")) {
+            if (str.indexOf(tag)==-1) {
                 workTimes.add(time);
             }
         }

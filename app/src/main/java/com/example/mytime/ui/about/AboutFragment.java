@@ -13,17 +13,8 @@ import androidx.fragment.app.Fragment;
 import com.example.mytime.R;
 
 public class AboutFragment extends Fragment {
-
-    ImageView imageView;
-    ImageButton imageButton;
-
     // 拍照回传码
-    public final static int CAMERA_REQUEST_CODE = 0;
-    // 相册选择回传吗
-    public final static int GALLERY_REQUEST_CODE = 1;
-
-    private GalleryViewModel galleryViewModel;
-
+   // public final static int CAMERA_REQUEST_CODE = 0;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_about, container, false);

@@ -53,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_help, R.id.nav_about,
                 R.id.nav_study, R.id.nav_birth, R.id.nav_work, R.id.nav_vocation, R.id.nav_self_def)
@@ -65,14 +63,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //顶部菜单选择
-        //getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
     @Override
     //覆盖onSupportNavigateUp()以处理向上导航
@@ -91,6 +81,5 @@ public class MainActivity extends AppCompatActivity {
                         , data.getStringExtra("tag"), data.getStringExtra("reset"),data.getStringExtra("image"));
                 times.add(time);
         }
-
     }
 }

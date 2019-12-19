@@ -30,11 +30,12 @@ import static com.example.mytime.MyTime.CalculateLastDay;
 import static com.example.mytime.control.FileDataStream.saveBitmap;
 import static com.example.mytime.MainActivity.TIME_NEW_REQUEST_CODE;
 import static com.example.mytime.ui.AddNewTime.NewTime.TIME_OK;
-import static com.example.mytime.ui.about.AboutFragment.CAMERA_REQUEST_CODE;
+//import static com.example.mytime.ui.about.AboutFragment.CAMERA_REQUEST_CODE;
 import static com.example.mytime.ui.home.HomeFragment.times;
 
 public class TimeDetail extends AppCompatActivity {
     static int NEW_ITME = -1;
+    public final static int CAMERA_REQUEST_CODE=0;
     public final static int GALLERY_REQUEST_CODE = 202;
     public final static int TIME_EDIT_REQUEST_CODE = 200;
 

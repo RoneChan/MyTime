@@ -279,6 +279,7 @@
                 android:id="@+id/tv_add_table2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="无"
                 android:layout_marginStart="25dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="8dp"
