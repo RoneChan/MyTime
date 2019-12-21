@@ -2,27 +2,18 @@ package com.example.mytime;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.example.mytime.ui.AddNewTime.NewTime;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import android.view.View;
-
 import androidx.annotation.Nullable;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
 import com.google.android.material.navigation.NavigationView;
-
 import androidx.drawerlayout.widget.DrawerLayout;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import android.view.Menu;
-
 import static com.example.mytime.ui.AddNewTime.NewTime.TIME_OK;
 import static com.example.mytime.ui.home.HomeFragment.times;
 

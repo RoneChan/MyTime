@@ -1,6 +1,5 @@
 package com.example.mytime;
 
-import android.graphics.Bitmap;
 
 import java.io.Serializable;
 import java.text.DateFormat;

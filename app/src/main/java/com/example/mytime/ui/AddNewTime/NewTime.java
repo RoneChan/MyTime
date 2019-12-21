@@ -50,7 +50,7 @@ public class NewTime extends AppCompatActivity {
     Button save;
     String oldPicPath = "";
 
-    static int flag = -1, havePicFlag = 0;
+    int flag = -1, havePicFlag = 0;
     int position = -1;
 
     MyTime myTime = null;
